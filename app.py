@@ -13,7 +13,7 @@ except ImportError:
 
 
 @asynccontextmanager
-async def get_session(app : FastAPI):
+async def lifespan(app : FastAPI):
     app.state.saavn = Saavn()
     try:
         await app.state.saavn.setup() 
@@ -23,13 +23,13 @@ async def get_session(app : FastAPI):
         
 
 async def get_client(request: Request) -> Saavn:
-    if not hasattr(request.app.state, "saavn"):
-        request.app.state.saavn = Saavn()
-        await request.app.state.saavn.setup()
+    # if not hasattr(request.app.state, "saavn"):
+    #     request.app.state.saavn = Saavn()
+    #     await request.app.state.saavn.setup()
     return request.app.state.saavn      
     
 
-app = FastAPI(debug=True  , lifespan=get_session , title="Saavn Rest Api" , description="Saavn Rest Api" , version="0.0.1")
+app = FastAPI(debug=True  , lifespan=lifespan , title="Saavn Rest Api" , description="Saavn Rest Api" , version="0.0.1")
 
 
 @app.get('/saavn/search/query={query}')
