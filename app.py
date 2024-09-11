@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from saavn import Saavn
 import asyncio
-from _types import SearchResponse
 
 try:
     import uvloop # type: ignore
@@ -31,7 +30,7 @@ app = FastAPI(debug=True  , lifespan=get_session , title="Saavn Rest Api" , desc
 
 
 @app.get('/saavn/search/query={query}')
-async def get_search(query : str , saavn : Saavn = Depends(get_client)) -> SearchResponse:
+async def get_search(query : str , saavn : Saavn = Depends(get_client)) -> JSONResponse:
     """Returns serach results from Saavan API.
 
     Args:
