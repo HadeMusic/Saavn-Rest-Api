@@ -22,8 +22,11 @@ async def get_session(app : FastAPI):
         await app.state.saavn.close() 
         
 
-def get_client(request : Request) -> Saavn:
-    return request.app.state.saavn        
+async def get_client(request: Request) -> Saavn:
+    if not hasattr(request.app.state, "saavn"):
+        request.app.state.saavn = Saavn()
+        await request.app.state.saavn.setup()
+    return request.app.state.saavn      
     
 
 app = FastAPI(debug=True  , lifespan=get_session , title="Saavn Rest Api" , description="Saavn Rest Api" , version="0.0.1")
