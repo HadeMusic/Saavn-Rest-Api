@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from saavn import Saavn
+from contextlib import asynccontextmanager
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -11,6 +12,12 @@ try:
 except ImportError:
     pass
 
+
+@asynccontextmanager
+async def lifespan(app : FastAPI):
+    yield
+    if hasattr(app.state , 'saavn') and app.state.saavn.session and not app.state.saavn.session.closed:
+        await app.state.saavn.close()
 
 def get_client(request: Request):
     return request.app.state.saavn
@@ -23,7 +30,6 @@ class AiohttpSessionMiddleware(BaseHTTPMiddleware):
             or not request.app.state.saavn.session
             or request.app.state.saavn.session.closed
         ):
-            print("Creating a new session of aiohttp")
             request.app.state.saavn = Saavn()
             await request.app.state.saavn.setup()
         response = await call_next(request)
@@ -31,7 +37,7 @@ class AiohttpSessionMiddleware(BaseHTTPMiddleware):
 
 
 app = FastAPI(
-    debug=True, title="Saavn Rest Api", description="Saavn Rest Api", version="0.0.1"
+    lifespan=lifespan , debug=True, title="Saavn Rest Api", description="Saavn Rest Api", version="0.0.1"
 )
 
 app.add_middleware(AiohttpSessionMiddleware)
