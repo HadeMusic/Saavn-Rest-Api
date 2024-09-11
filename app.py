@@ -12,35 +12,36 @@ try:
 except ImportError:
     pass
 
+saavn = Saavn()
 
-@asynccontextmanager
-async def lifespan(app : FastAPI):
-    yield
-    if hasattr(app.state , 'saavn') and app.state.saavn.session and not app.state.saavn.session.closed:
-        await app.state.saavn.close()
+# @asynccontextmanager
+# async def lifespan(app : FastAPI):
+#     yield
+#     if hasattr(app.state , 'saavn') and app.state.saavn.session and not app.state.saavn.session.closed:
+#         await app.state.saavn.close()
 
 def get_client(request: Request):
-    return request.app.state.saavn
+    return saavn
 
 
-class AiohttpSessionMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        if (
-            not hasattr(request.app.state, "saavn")
-            or not request.app.state.saavn.session
-            or request.app.state.saavn.session.closed
-        ):
-            request.app.state.saavn = Saavn()
-            await request.app.state.saavn.setup()
-        response = await call_next(request)
-        return response
+# class AiohttpSessionMiddleware(BaseHTTPMiddleware):
+#     async def dispatch(self, request: Request, call_next):
+#         if (
+#             not hasattr(request.app.state, "saavn")
+#             or not request.app.state.saavn.session
+#             or request.app.state.saavn.session.closed
+#         ):
+#             request.app.state.saavn = Saavn()
+#             await request.app.state.saavn.setup()
+#         response = await call_next(request)
+#         return response
 
 
 app = FastAPI(
-    lifespan=lifespan , debug=True, title="Saavn Rest Api", description="Saavn Rest Api", version="0.0.1"
+     debug=True, title="Saavn Rest Api", description="Saavn Rest Api", version="0.0.1"
 )
 
-app.add_middleware(AiohttpSessionMiddleware)
+# app.add_middleware(AiohttpSessionMiddleware)
 
 
 @app.get("/saavn/search/query={query}")

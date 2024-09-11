@@ -17,6 +17,8 @@ class Saavn:
         self.session = None    
     
     async def _request(self , method : Literal["GET" , "POST"] , url : str , *args : Any , **kwargs : Any):
+        if self.session is None:
+            self.session = aiohttp.ClientSession()
         async with self.session.request(method=method , url=url , *args , **kwargs) as resp:
             return await resp.text()
                   
