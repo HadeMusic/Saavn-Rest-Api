@@ -1,10 +1,10 @@
-from typing import Dict , Any , List , Literal
+from typing import Dict , Any , List , Literal , Union
 import aiohttp
 import orjson as json
 from contextlib import suppress
 
 class Saavn:
-    session : aiohttp.ClientSession | None
+    session : Union[aiohttp.ClientSession , None]
     
     async def setup(self) -> None:
         self.session = aiohttp.ClientSession()
