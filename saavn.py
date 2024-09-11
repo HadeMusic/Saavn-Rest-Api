@@ -18,7 +18,7 @@ class Saavn:
             return await resp.text()
                   
         
-    def cleanstring(self , text : str | None) -> str:
+    def cleanstring(self , text : Union[str , None]) -> str:
         if text is not None:
             return text.replace("&quot;" , "").replace("&amp;" , "")
         return text
