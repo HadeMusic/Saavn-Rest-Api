@@ -4,7 +4,9 @@ import orjson as json
 from contextlib import suppress
 
 class Saavn:
-    session : Union[aiohttp.ClientSession , None]
+    def  __init__(self) -> None:
+        self.session : Union[aiohttp.ClientSession , None] = None
+    
     
     async def setup(self) -> None:
         self.session = aiohttp.ClientSession()
@@ -12,6 +14,7 @@ class Saavn:
     async def close(self) -> None:
         if self.session:
             await self.session.close()
+        self.session = None    
     
     async def _request(self , method : Literal["GET" , "POST"] , url : str , *args : Any , **kwargs : Any):
         async with self.session.request(method=method , url=url , *args , **kwargs) as resp:
