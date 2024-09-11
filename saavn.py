@@ -4,23 +4,10 @@ import orjson as json
 from contextlib import suppress
 
 class Saavn:
-    def  __init__(self) -> None:
-        self.session : Union[aiohttp.ClientSession , None] = None
-    
-    
-    async def setup(self) -> None:
-        self.session = aiohttp.ClientSession()
-    
-    async def close(self) -> None:
-        if self.session:
-            await self.session.close()
-        self.session = None    
-    
     async def _request(self , method : Literal["GET" , "POST"] , url : str , *args : Any , **kwargs : Any):
-        if self.session is None:
-            self.session = aiohttp.ClientSession()
-        async with self.session.request(method=method , url=url , *args , **kwargs) as resp:
-            return await resp.text()
+        async with aiohttp.ClientSession() as session:
+            async with session.request(method=method , url=url , *args , **kwargs) as resp:
+                return await resp.text()
                   
         
     def cleanstring(self , text : Union[str , None]) -> str:

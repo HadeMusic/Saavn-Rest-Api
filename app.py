@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from saavn import Saavn
-from contextlib import asynccontextmanager
+import time
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -14,34 +14,29 @@ except ImportError:
 
 saavn = Saavn()
 
-# @asynccontextmanager
-# async def lifespan(app : FastAPI):
-#     yield
-#     if hasattr(app.state , 'saavn') and app.state.saavn.session and not app.state.saavn.session.closed:
-#         await app.state.saavn.close()
+
 
 def get_client(request: Request):
     return saavn
 
 
-# class AiohttpSessionMiddleware(BaseHTTPMiddleware):
-#     async def dispatch(self, request: Request, call_next):
-#         if (
-#             not hasattr(request.app.state, "saavn")
-#             or not request.app.state.saavn.session
-#             or request.app.state.saavn.session.closed
-#         ):
-#             request.app.state.saavn = Saavn()
-#             await request.app.state.saavn.setup()
-#         response = await call_next(request)
-#         return response
+class AiohttpSessionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+        return response
+        
 
 
 app = FastAPI(
      debug=True, title="Saavn Rest Api", description="Saavn Rest Api", version="0.0.1"
 )
 
-# app.add_middleware(AiohttpSessionMiddleware)
+app.add_middleware(AiohttpSessionMiddleware)
+
+
 
 
 @app.get("/saavn/search/query={query}")
