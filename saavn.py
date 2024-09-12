@@ -11,7 +11,7 @@ class Saavn:
                   
         
     def cleanstring(self , text : Union[str , None]) -> str:
-        if text is not None:
+        if isinstance(text , str):
             return text.replace("&quot;" , "").replace("&amp;" , "")
         return text
 
@@ -23,7 +23,7 @@ class Saavn:
         track['length'] = int(data['duration']) * 1000
         track['uri'] = data['perma_url']
         track['artworkUrl'] = data.get('image').replace('150x150' , '500x500') if data.get('image' , None) else None 
-        track['albumName'] = data.get('album' , None)
+        track['albumName'] = self.cleanstring(data.get('album' , None))
         track['albumUrl'] = data.get('album_url' , None)
         track['artistUrl'] = None
         track['artistArtworkUrl'] = None
@@ -45,7 +45,7 @@ class Saavn:
         song['length'] = int(data['more_info']['duration']) * 1000
         song['uri'] = data['perma_url']
         song['artworkUrl'] = data.get('image').replace('150x150' , '500x500') if data.get('image' , None) else None 
-        song['albumName'] = data.get('more_info' , {}).get('album' , None)
+        song['albumName'] = self.cleanstring(data.get('more_info' , {}).get('album' , None))
         song['albumUrl'] = data.get('more_info' , {}).get('album_url' , None)
         
         if data['more_info']['artistMap'].get('primary_artists' , []):
