@@ -3,14 +3,7 @@ from fastapi.responses import JSONResponse
 from saavn import Saavn
 import time
 from starlette.middleware.base import BaseHTTPMiddleware
-
-try:
-    import uvloop  # type: ignore
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except ImportError:
-    pass
-
+from slider import Silder
 saavn = Saavn()
 
 
