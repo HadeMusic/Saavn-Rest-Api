@@ -70,7 +70,7 @@ async def get_autocomplete(
     autocomplete = await saavn.get_autocomplete(query)
     return JSONResponse(content=autocomplete, status_code=200)
 
-@app.get('/slider/search/query={query}')
+@app.get('/sliderkz/search/query={query}')
 async def slider_search(query : str) -> JSONResponse:
     return await Silder().search(query)
 
