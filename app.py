@@ -4,13 +4,7 @@ from saavn import Saavn
 import time
 import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
-
-try:
-    import uvloop  # type: ignore
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except ImportError:
-    pass
+from slider import Silder
 
 saavn = Saavn()
 
@@ -76,6 +70,9 @@ async def get_autocomplete(
     autocomplete = await saavn.get_autocomplete(query)
     return JSONResponse(content=autocomplete, status_code=200)
 
+@app.get('/slider/search/query={query}')
+async def slider_search(query : str) -> JSONResponse:
+    return await Silder().search(query)
 
 if __name__ == "__main__":
     import uvicorn
