@@ -2,15 +2,9 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 from saavn import Saavn
 import time
-import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
 
-try:
-    import uvloop  # type: ignore
 
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except ImportError:
-    pass
 
 saavn = Saavn()
 
