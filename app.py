@@ -28,9 +28,6 @@ app = FastAPI(
 
 app.add_middleware(AiohttpSessionMiddleware)
 
-
-
-
 @app.get("/saavn/search/query={query}")
 async def get_search(query: str, saavn: Saavn = Depends(get_client)) -> JSONResponse:
     search = await saavn.get_search(query)
