@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from saavn import Saavn
 import time
 from starlette.middleware.base import BaseHTTPMiddleware
-from slider import Silder
+from mangum import Mangum
 saavn = Saavn()
 
 
@@ -69,7 +69,4 @@ async def get_autocomplete(
 async def slider_search(query : str) -> JSONResponse:
     return await Silder().search(query)
 
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, log_level=20, reload=True)
+handler = Mangum(app, lifespan="off")
